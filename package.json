@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "nodemon --exec npx babel-node src/index.js"
   },
   "author": "reasley",
   "license": "MIT",
@@ -17,6 +17,17 @@
   "homepage": "https://github.com/reasley-com/discord-music-bot#readme",
   "description": "",
   "dependencies": {
-    "discord.js": "^13.4.0"
+    "@discordjs/voice": "^0.7.5",
+    "discord.js": "^13.4.0",
+    "ffmpeg-static": "^4.4.0",
+    "libsodium-wrappers": "^0.7.9",
+    "ytdl-core": "^4.9.2",
+    "ytdl-core-discord": "^1.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/node": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "nodemon": "^2.0.15"
   }
 }
