@@ -1,0 +1,22 @@
+{
+  "name": "musicdiscordbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "author": "reasley",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reasley-com/discord-music-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/reasley-com/discord-music-bot/issues"
+  },
+  "homepage": "https://github.com/reasley-com/discord-music-bot#readme",
+  "description": "",
+  "dependencies": {
+    "discord.js": "^13.4.0"
+  }
+}
