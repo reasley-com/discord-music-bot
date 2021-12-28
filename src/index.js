@@ -1,8 +1,7 @@
-const { Client, Intents } = require('discord.js')
-
-const sleep = require("./functions/sleep.js")
-const music = require("./functions/music.js")
-const { prefix, token } = require("./config.json")
+import sleep from './functions/sleep.js'
+import { play } from './functions/music.js'
+import { Client, Intents } from 'discord.js'
+import { prefix, token } from './config.json'
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] })
 
@@ -18,7 +17,7 @@ client.on('messageCreate', async msg => {
 
     // Play
     if (msg.content.startsWith(`${prefix}play`)) {
-        music.play(msg)
+        play(msg)
     }
 })
 

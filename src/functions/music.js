@@ -3,11 +3,16 @@ const { joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, createAudioRe
 
 export async function play(msg) {
     const args = msg.content.split(" ")
-    const songInfo = await ytdl.getInfo(args[1]);
-    const song = {
-        title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url,
-    };
+    try {
+        const songInfo = await ytdl.getInfo(args[1]);
+        const song = {
+            title: songInfo.videoDetails.title,
+            url: songInfo.videoDetails.video_url,
+        };
+    } catch(err) {
+        return msg.reply(`:arrow_forward: Wrong link`)
+    }
+    
 
     const connection = joinVoiceChannel({
         channelId: msg.member.voice.channelId,

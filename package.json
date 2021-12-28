@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec npx babel-node src/index.js",
-    "dis": "npx babel-node src/index.js"
+    "dis": "babel-node src/index.js"
   },
   "author": "reasley",
   "license": "MIT",
