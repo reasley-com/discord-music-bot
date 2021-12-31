@@ -27,12 +27,24 @@ Node.js 16.6.0 or newer is required.
 
 <br>
 
-## Example usage
+## Example install usage
+
+Customize DiscordBot:
+<br>
+`src/config.json` file to fit your needs.
+<pre>{
+	"prefix": "{Your Prefix}", 
+	"token" : "{Your Token}",
+}</pre>
+
+<br>
+
 Execute DiscordBot:
 <pre>$ nohup npm run dis > app.log &</pre>
 
 <br>
 
+## Example no install usage
 Invite DiscordBot: 
 - [DiscordBot invite link](https://discord.com/api/oauth2/authorize?client_id=925052224424542208&permissions=3213312&scope=bot)
 
