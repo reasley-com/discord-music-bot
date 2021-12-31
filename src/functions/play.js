@@ -1,31 +1,30 @@
 const ytdl = require("ytdl-core-discord")
 import { channelConnect } from './channelConnect.js'
+import { MessageEmbed } from 'discord.js'
 const { createAudioPlayer, NoSubscriberBehavior, createAudioResource, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
 
-export async function play(msg, queue) {
+const emoji = [ '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣' ]
+
+async function play(msg, queue) {
     // queue data get
     const serverQueue = queue.get(msg.guild.id)
 
     // music data get & assort
+    const args = msg.content.split(" ")
+    let songAsso = {
+        title: '',
+        url: '',
+    }
     try {
-        const args = msg.content.split(" ")
         const songInfo = await ytdl.getInfo(args[1]);
-        const songAsso = {
+        songAsso = {
             title: songInfo.videoDetails.title,
             url: songInfo.videoDetails.video_url,
         }
     } catch (err) {
-        msg.reply(`:arrow_forward:  Link Error`)
+        msg.channel.send(`:arrow_forward:  Link Error`)
         return
     }
-    const args = msg.content.split(" ")
-    const songInfo = await ytdl.getInfo(args[1]);
-    const songAsso = {
-        title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url,
-    }
-    
-
 
     // server queue check
     // 이미 동작중인 서버에서 요청한 명령어인지 확인
@@ -34,22 +33,53 @@ export async function play(msg, queue) {
         const connection = channelConnect(msg)
         const queueContruct = { connection: connection, songs: [songAsso] };
         queue.set(msg.guild.id, queueContruct)
-        playExecute(msg, queue)
+        await playExecute(msg, queue)
     } else {
         // new song insert play list
         serverQueue.songs.push(songAsso)
-        msg.reply(`:arrow_forward:  ${songAsso.title} has been added to the queue!`)
+
+
+        // 임베디드 메세지 생성
+        const embed = new MessageEmbed()
+
+        // 재생목록 작성
+        let songList = []
+
+        // 등록된 곡이 1개일 경우 > 플레이 중인 곡만 출력
+        // 큐에서 노래 삭제는 노래 종료 후 삭제되므로 length가 0일 경우에는 continue
+        if (serverQueue.songs.length == 1){
+            embed
+            .setTitle('Music status')
+            .setDescription(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***`)
+        } else { // 등록된 곡이 2개 이상일 경우 > 현재 재생 목록 출력
+            while ( serverQueue.songs.length != songList.length && songList.length < 10 ) {
+                if ( songList.length == 0 ) {
+                    songList.push('\n')
+                    continue
+                }
+                songList.push(emoji[songList.length] + ' : ' + serverQueue.songs[songList.length].title + '\n')
+            }
+            embed
+            .setTitle('Music status')
+            .setDescription(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***
+            :arrow_forward:  Add Play *** ${serverQueue.songs[serverQueue.songs.length-1].title} ***
+
+            ${songList.join(' ')}
+            `)
+        }
+        await msg.channel.send({embeds: [embed]})
     }
 }
 
 async function playExecute(msg, queue) {
-    const serverQueue = queue.get(msg.guild.id);
+    let serverQueue = queue.get(msg.guild.id);
 
     // get ytdl
     const stream = await ytdl(serverQueue.songs[0].url, { filter: 'audioonly', quality: 'lowest', format: 'mp3', hightWaterMark: 1<<25 })
 
     // Pause to no subscriber in channle
-    var resource = createAudioResource(stream)
+    var resource = createAudioResource(stream, { inlineVolume: true })
+    resource.volume.setVolume(0.05);
     const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } })
     player.play(resource)
     serverQueue.connection.subscribe(player)
@@ -67,7 +97,19 @@ async function playExecute(msg, queue) {
 
         // 다음곡으로 넘김
         serverQueue.songs.shift()
-        playExecute(msg)
+        await playExecute(msg, queue)
     });
-    await msg.reply(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***`)
+
+    
+    // 현재 재생중인 안내 메세지
+    const embed = new MessageEmbed()
+        .setTitle('Music status')
+        .setDescription(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***
+        :arrow_forward: The number of songs left :: ${serverQueue.songs.length - 1}`)
+    
+    await msg.channel.send({embeds: [embed]})
+    // await msg.reply(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***`)
 }
+
+
+export default play

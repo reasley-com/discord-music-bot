@@ -1,11 +1,32 @@
 const { VoiceConnectionStatus } = require('@discordjs/voice');
-import { channelConnect } from './channelConnect.js'
+import { MessageEmbed } from 'discord.js'
 
-export async function exit(msg, queue) {
-    const connection = channelConnect(msg)
+async function exit(msg, queue) {
+    const serverQueue = queue.get(msg.guild.id)
 
-    connection.on(VoiceConnectionStatus.Ready, () => {
+    const embed = new MessageEmbed()
+    if ( serverQueue ){
         queue.delete(msg.guild.id);
-        connection.destroy()
-    });
+        serverQueue.connection.destroy()
+        /*
+        serverQueue.connection.on(VoiceConnectionStatus.Connecting, () => {
+            queue.delete(msg.guild.id);
+            serverQueue.connection.destroy()
+        });
+        */
+        embed
+        .setTitle('Music status')
+        .setDescription(`Disconnected it normally.`)
+    
+        await msg.channel.send({embeds: [embed]})
+        //await msg.channel.send('Disconnected it normally.')
+    } else {
+        embed
+        .setTitle('Music status')
+        .setDescription(`Not connected to the voice chat.`)
+    
+        await msg.channel.send({embeds: [embed]})
+    }
 }
+
+export default exit
