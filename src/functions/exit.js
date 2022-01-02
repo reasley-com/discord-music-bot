@@ -8,18 +8,12 @@ async function exit(msg, queue) {
     if ( serverQueue ){
         queue.delete(msg.guild.id);
         serverQueue.connection.destroy()
-        /*
-        serverQueue.connection.on(VoiceConnectionStatus.Connecting, () => {
-            queue.delete(msg.guild.id);
-            serverQueue.connection.destroy()
-        });
-        */
+
         embed
-        .setTitle('Music status')
-        .setDescription(`Disconnected it normally.`)
+            .setTitle('Music status')
+            .setDescription(`Disconnected it normally.`)
     
         await msg.channel.send({embeds: [embed]})
-        //await msg.channel.send('Disconnected it normally.')
     } else {
         embed
         .setTitle('Music status')

@@ -5,6 +5,7 @@ async function help(msg, prefix) {
         .setTitle('Music status')
         .setDescription(`:arrow_forward:  ${prefix}help or ${prefix}h                :: Help output.
         :arrow_forward:  ${prefix}play {Youtube Link} or ${prefix}p {Youtube Link}   :: Play the song.
+        :arrow_forward:  ${prefix}skip or ${prefix}s                                 :: Skip song
         :arrow_forward:  ${prefix}exit or ${prefix}e                                 :: Exit channel
         `)
     

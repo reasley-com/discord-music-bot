@@ -5,7 +5,7 @@ const { createAudioPlayer, NoSubscriberBehavior, createAudioResource, VoiceConne
 
 const emoji = [ '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣' ]
 
-async function play(msg, queue) {
+export async function play(msg, queue) {
     // queue data get
     const serverQueue = queue.get(msg.guild.id)
 
@@ -15,6 +15,7 @@ async function play(msg, queue) {
         title: '',
         url: '',
     }
+
     try {
         const songInfo = await ytdl.getInfo(args[1]);
         songAsso = {
@@ -33,7 +34,7 @@ async function play(msg, queue) {
         const connection = channelConnect(msg)
         const queueContruct = { connection: connection, songs: [songAsso] };
         queue.set(msg.guild.id, queueContruct)
-        await playExecute(msg, queue)
+        await playExecute(msg, queue, 'play')
     } else {
         // new song insert play list
         serverQueue.songs.push(songAsso)
@@ -71,15 +72,15 @@ async function play(msg, queue) {
     }
 }
 
-async function playExecute(msg, queue) {
-    let serverQueue = queue.get(msg.guild.id);
+export async function playExecute(msg, queue) {
+    let serverQueue = queue.get(msg.guild.id)
 
     // get ytdl
     const stream = await ytdl(serverQueue.songs[0].url, { filter: 'audioonly', quality: 'lowest', format: 'mp3', hightWaterMark: 1<<25 })
 
     // Pause to no subscriber in channle
     var resource = createAudioResource(stream, { inlineVolume: true })
-    resource.volume.setVolume(0.05);
+    resource.volume.setVolume(0.05)
     const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } })
     player.play(resource)
     serverQueue.connection.subscribe(player)
@@ -106,10 +107,7 @@ async function playExecute(msg, queue) {
         .setTitle('Music status')
         .setDescription(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***
         :arrow_forward: The number of songs left :: ${serverQueue.songs.length - 1}`)
-    
+
     await msg.channel.send({embeds: [embed]})
     // await msg.reply(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***`)
 }
-
-
-export default play

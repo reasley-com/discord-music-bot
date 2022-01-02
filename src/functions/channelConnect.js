@@ -5,5 +5,5 @@ export function channelConnect(msg) {
         channelId: msg.member.voice.channelId,
         guildId: msg.guild.id,
         adapterCreator: msg.guild.voiceAdapterCreator
-    });
+    })
 }

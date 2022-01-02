@@ -1,9 +1,13 @@
-import { sleep } from './functions/sleep.js'
-//import { play, exit } from './functions/music.js'
-import play from './functions/play.js'
-import exit from './functions/exit.js'
-import help from './functions/help.js'
 import { Client, Intents, MessageEmbed } from 'discord.js'
+const { VoiceConnectionStatus } = require('@discordjs/voice');
+
+
+import { play } from './functions/play.js'
+import skip from './functions/skip.js'
+import help from './functions/help.js'
+import exit from './functions/exit.js'
+import { sleep } from './functions/sleep.js'
+
 import { prefix, token, t_token } from './config.json'
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] })
@@ -14,6 +18,18 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
     client.user.setActivity(`Music Bot | ${prefix}help`, { type: 'LISTENING' })
 })
+
+
+// 봇 강제 연결 해제 시 후처리
+client.on('voiceStateUpdate', msg => {
+    const serverQueue = queue.get(msg.guild.id)
+
+    if ( serverQueue ) {
+        serverQueue.connection.on(VoiceConnectionStatus.Disconnected, () => {
+            queue.delete(msg.guild.id)
+        });
+    }
+});
 
 client.on('messageCreate', msg => {
     // Prefix & Bot message check
@@ -28,6 +44,12 @@ client.on('messageCreate', msg => {
     // Play
     if (msg.content.startsWith(`${prefix}play`) || msg.content.startsWith(`${prefix}p`)) {
         play(msg, queue)
+        return
+    }
+
+    // Skip
+    if (msg.content.startsWith(`${prefix}skip`) || msg.content.startsWith(`${prefix}s`)) {
+        skip(msg, queue)
         return
     }
 
