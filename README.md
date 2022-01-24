@@ -40,9 +40,19 @@ Customize DiscordBot:
 <br>
 
 Execute DiscordBot:
-<pre>$ nohup npm run dis > app.log &</pre>
+<pre>$ npm install -g pm2
+$ pm2 start src/index.js --interpreter ./node_modules/.bin/babel-node
+</pre>
 
 <br>
+
+Startup Script DiscordBot:
+<pre>$ pm2 startup
+$ pm2 save
+</pre>
+
+<br>
+
 
 ## Example no install usage
 Invite DiscordBot: 
