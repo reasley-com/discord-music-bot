@@ -90,7 +90,12 @@ export async function playExecute(msg, queue) {
     player.on(AudioPlayerStatus.Idle, async () => {
         // 재생 중이던 음악 삭제 & 다음 곡이 없다면 봇 정리
         if (serverQueue.songs.length == 1){
-            await msg.reply(`:arrow_forward:  Not Playing List`)
+            const embed = new MessageEmbed()
+                .setTitle('Music status')
+                .setDescription(`:arrow_forward:  Not Playing List`)
+
+            await msg.channel.send({embeds: [embed]})
+            
             queue.delete(msg.guild.id);
             serverQueue.connection.destroy()
             return
@@ -109,5 +114,4 @@ export async function playExecute(msg, queue) {
         :arrow_forward: The number of songs left :: ${serverQueue.songs.length - 1}`)
 
     await msg.channel.send({embeds: [embed]})
-    // await msg.reply(`:arrow_forward:  Now Playing *** ${serverQueue.songs[0].title} ***`)
 }
