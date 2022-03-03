@@ -39,7 +39,18 @@ Customize DiscordBot:
 
 <br>
 
-Execute DiscordBot:
+### First Execute DiscordBot:
+Running docker
+<pre>$ docker build -t discord-bot .
+$ docker run -d --name discord-bot discord-bot
+</pre>
+
+
+<br>
+<br>
+
+### Second Execute DiscordBot:
+Running pm2
 <pre>$ npm install -g pm2
 $ pm2 start src/index.js --interpreter ./node_modules/.bin/babel-node
 </pre>
